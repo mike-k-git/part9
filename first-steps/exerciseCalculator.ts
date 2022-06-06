@@ -8,11 +8,32 @@ interface Result {
   average: number;
 }
 
+interface ExerciseHours {
+  target: number;
+  hours: Array<number>;
+}
+
+const parseExerciseArguments = (args: Array<string>): ExerciseHours => {
+  if (args.length < 4)
+    throw new Error(
+      'Provide at least a target and one exercise day, i.e, npm run calculateExercises 2 4.5'
+    );
+  const allArgsAreNumbers = args.slice(2).every((arg) => !isNaN(Number(arg)));
+  if (allArgsAreNumbers) {
+    return {
+      target: Number(args[2]),
+      hours: args.slice(3).map((arg) => Number(arg)),
+    };
+  } else {
+    throw new Error('All arguments must be numbers');
+  }
+};
+
 const calculateExercises = (hours: Array<number>, target: number): Result => {
   const periodLength = hours.length;
   const trainingDays = hours.filter((hours) => hours > 0).length;
-  const success = trainingDays >= target;
   const average = hours.reduce((prev, sum) => prev + sum) / periodLength;
+  const success = average >= target;
 
   let rating = 2;
   let ratingDescription = 'Not bad';
@@ -35,4 +56,13 @@ const calculateExercises = (hours: Array<number>, target: number): Result => {
   };
 };
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2));
+try {
+  const { target, hours } = parseExerciseArguments(process.argv);
+  console.log(calculateExercises(hours, target));
+} catch (error: unknown) {
+  let errorMessage = 'Something bad happend.';
+  if (error instanceof Error) {
+    errorMessage += ' Error: ' + error.message;
+  }
+  console.log(errorMessage);
+}
