@@ -1,45 +1,40 @@
+import { BmiQuery } from './types';
+
 interface Measurements {
   height: number;
   weight: number;
 }
 
-const parseBmiArguments = (args: Array<string>): Measurements => {
-  if (args.length !== 4)
-    throw new Error(
-      'Provide exactly two arguments, i.e., "npm run calculateBmi 180 74".'
-    );
+export const parseBmiArguments = (args: BmiQuery): Measurements => {
+  const { height, weight } = args;
 
-  if (!isNaN(Number(args[2])) && !isNaN(Number(args[3]))) {
+  if (!isNaN(Number(height)) && !isNaN(Number(weight))) {
     return {
-      height: Number(args[2]),
-      weight: Number(args[3]),
+      height: Number(height),
+      weight: Number(weight),
     };
   } else {
     throw new Error('Provided values were not numbers');
   }
 };
 
-const calculateBmi = (height: number, weight: number) => {
-  const cm = height / 100;
-  const bmi = weight / Math.pow(cm, 2);
-  if (bmi < 18.5) {
-    return 'Underweight';
-  } else if (bmi >= 18.5 && bmi < 25) {
-    return 'Normal';
-  } else if (bmi >= 25 && bmi < 30) {
-    return 'Overweight';
+export const calculateBmi = (height: number, weight: number) => {
+  const heightInCm = height / 100;
+  const bmiValue = weight / Math.pow(heightInCm, 2);
+  let bmi: string;
+  if (bmiValue < 18.5) {
+    bmi = 'Underweight';
+  } else if (bmiValue >= 18.5 && bmiValue < 25) {
+    bmi = 'Normal';
+  } else if (bmiValue >= 25 && bmiValue < 30) {
+    bmi = 'Overweight';
   } else {
-    return 'Obesse';
+    bmi = 'Obesse';
   }
-};
 
-try {
-  const { height, weight } = parseBmiArguments(process.argv);
-  console.log(calculateBmi(height, weight));
-} catch (error: unknown) {
-  let errorMessage = 'Something bad happend.';
-  if (error instanceof Error) {
-    errorMessage += ' Error: ' + error.message;
-  }
-  console.log(errorMessage);
-}
+  return {
+    weight,
+    height,
+    bmi,
+  };
+};
