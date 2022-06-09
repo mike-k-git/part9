@@ -1,24 +1,10 @@
-import { BmiQuery } from './types';
-
-interface Measurements {
-  height: number;
+interface Result {
   weight: number;
+  height: number;
+  bmi: string;
 }
 
-export const parseBmiArguments = (args: BmiQuery): Measurements => {
-  const { height, weight } = args;
-
-  if (!isNaN(Number(height)) && !isNaN(Number(weight))) {
-    return {
-      height: Number(height),
-      weight: Number(weight),
-    };
-  } else {
-    throw new Error('Provided values were not numbers');
-  }
-};
-
-export const calculateBmi = (height: number, weight: number) => {
+export const calculateBmi = (height: number, weight: number): Result => {
   const heightInCm = height / 100;
   const bmiValue = weight / Math.pow(heightInCm, 2);
   let bmi: string;
