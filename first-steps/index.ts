@@ -1,5 +1,4 @@
 import express from 'express';
-import type { Request } from 'express';
 const app = express();
 import { BmiQuery } from './types';
 
@@ -9,9 +8,9 @@ app.get('/hello', (_req, res) => {
   res.send('Hello Full Stack!');
 });
 
-app.get('/bmi', (req: Request<{}, any, any, BmiQuery>, res) => {
+app.get('/bmi', (req, res) => {
   try {
-    const { height, weight } = parseBmiArguments(req.query);
+    const { height, weight } = parseBmiArguments(req.query as BmiQuery);
     res.json(calculateBmi(height, weight));
   } catch (error: unknown) {
     let errorMessage = 'Something bad happend.';
