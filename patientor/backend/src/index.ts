@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 
+import diagnosesRouter from './routes/diagnoses';
+
 const app = express();
 
 const allowedOrigins = ['http://localhost:3000'];
@@ -11,6 +13,8 @@ const options: cors.CorsOptions = {
 app.use(cors(options));
 
 app.use(express.json());
+
+app.use('/api/diagnoses', diagnosesRouter);
 
 const PORT = 3001;
 
