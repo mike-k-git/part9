@@ -4,7 +4,7 @@ export interface Diagnose {
   lating?: string;
 }
 
-export interface Patient {
+export interface PatientEntry {
   id: string;
   name: string;
   dateOfBirth: string;
@@ -13,4 +13,6 @@ export interface Patient {
   occupation: string;
 }
 
-export type PatientWithoutSsn = Omit<Patient, 'ssn'>;
+export type PublicPatientEntry = Omit<PatientEntry, 'ssn'>;
+
+export type NewPatientEntry = Omit<PatientEntry, 'id'>;
