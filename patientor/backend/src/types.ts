@@ -1,7 +1,13 @@
 export interface Diagnose {
   code: string;
   name: string;
-  lating?: string;
+  latin?: string;
+}
+
+export enum Gender {
+  Male = 'male',
+  Female = 'female',
+  Other = 'other',
 }
 
 export interface PatientEntry {
@@ -9,7 +15,7 @@ export interface PatientEntry {
   name: string;
   dateOfBirth: string;
   ssn: string;
-  gender: string;
+  gender: Gender;
   occupation: string;
 }
 
