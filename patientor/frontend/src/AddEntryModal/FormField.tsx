@@ -1,31 +1,76 @@
-import React, { useState } from 'react';
 import { ErrorMessage, Field, FieldProps, FormikProps } from 'formik';
+import { Diagnosis, EntryType, HealthCheckRating } from '../types';
 import {
-  Select,
   FormControl,
+  Input,
+  InputLabel,
   MenuItem,
+  Select,
   TextField as TextFieldMUI,
   Typography,
 } from '@material-ui/core';
-import { Diagnosis, Gender } from '../types';
-import { InputLabel } from '@material-ui/core';
-import Input from '@material-ui/core/Input';
+import { useState } from 'react';
+import { EntryFormValues } from './AddEntryForm';
 
-// structure of a single option
-export type GenderOption = {
-  value: Gender;
+export type EntryTypeOption = {
+  value: EntryType;
   label: string;
 };
 
-// props for select field component
 type SelectFieldProps = {
   name: string;
   label: string;
-  options: GenderOption[];
+  options: EntryTypeOption[];
 };
 
 const FormikSelect = ({ field, ...props }: FieldProps) => (
-  <Select {...field} {...props} />
+  <Select
+    {...field}
+    {...props}
+    onChange={(e) => {
+      let values: EntryFormValues;
+      switch (e.target.value as EntryType) {
+        case EntryType.HealthCheck:
+          values = {
+            date: '',
+            description: '',
+            specialist: '',
+            diagnosisCodes: [],
+            type: EntryType.HealthCheck,
+            healthCheckRating: HealthCheckRating.Healthy,
+          };
+          break;
+        case EntryType.Hospital:
+          values = {
+            date: '',
+            description: '',
+            specialist: '',
+            diagnosisCodes: [],
+            type: EntryType.Hospital,
+            discharge: {
+              criteria: '',
+              date: '',
+            },
+          };
+          break;
+        case EntryType.OccupationalHealthcare:
+          values = {
+            date: '',
+            description: '',
+            specialist: '',
+            diagnosisCodes: [],
+            type: EntryType.OccupationalHealthcare,
+            employerName: '',
+            sickLeave: {
+              startDate: '',
+              endDate: '',
+            },
+          };
+          break;
+      }
+      props.form.resetForm({ values });
+    }}
+  />
 );
 
 export const SelectField = ({ name, label, options }: SelectFieldProps) => (
@@ -66,17 +111,21 @@ export const TextField = ({ field, label, placeholder }: TextProps) => (
   </div>
 );
 
-/*
-  for exercises 9.24.-
-*/
 interface NumberProps extends FieldProps {
   label: string;
   min: number;
   max: number;
+  setFieldValue: FormikProps<{ healthCheckRating: number }>['setFieldValue'];
 }
 
-export const NumberField = ({ field, label, min, max }: NumberProps) => {
-  const [value, setValue] = useState<number>();
+export const NumberField = ({
+  field,
+  label,
+  min,
+  max,
+  setFieldValue,
+}: NumberProps) => {
+  const [value, setValue] = useState<number>(min);
 
   return (
     <div style={{ marginBottom: '1em' }}>
@@ -89,10 +138,17 @@ export const NumberField = ({ field, label, min, max }: NumberProps) => {
         value={value}
         onChange={(e) => {
           const value = parseInt(e.target.value);
-          if (value === undefined) return;
-          if (value > max) setValue(max);
-          else if (value <= min) setValue(min);
-          else setValue(Math.floor(value));
+          if (value === undefined || isNaN(value)) return;
+          if (value > max) {
+            setFieldValue('healthCheckRating', max);
+            setValue(max);
+          } else if (value <= min) {
+            setFieldValue('healthCheckRating', min);
+            setValue(min);
+          } else {
+            setFieldValue('healthCheckRating', Math.floor(value));
+            setValue(Math.floor(value));
+          }
         }}
       />
       <Typography variant="subtitle2" style={{ color: 'red' }}>
